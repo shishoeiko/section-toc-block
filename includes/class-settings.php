@@ -214,7 +214,7 @@ class STOC_Settings {
                         <td>
                             <?php
                             $update_plugins = get_site_transient( 'update_plugins' );
-                            $plugin_file = 'section-toc-block/section-toc-block.php';
+                            $plugin_file = STOC_PLUGIN_BASENAME;
                             if ( isset( $update_plugins->response[ $plugin_file ] ) ) {
                                 $update_info = $update_plugins->response[ $plugin_file ];
                                 echo '<span style="color: #00a32a;">✓ ' . esc_html__( '更新情報が登録されています', 'section-toc-block' ) . '</span><br>';

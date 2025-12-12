@@ -133,7 +133,7 @@ class STOC_GitHub_Updater {
         $new_version = $release_info->version;
 
         if ( version_compare( $new_version, $current_version, '>' ) ) {
-            $plugin_file = 'section-toc-block/section-toc-block.php';
+            $plugin_file = STOC_PLUGIN_BASENAME;
 
             $transient->response[ $plugin_file ] = (object) array(
                 'slug'        => 'section-toc-block',
@@ -244,17 +244,16 @@ class STOC_GitHub_Updater {
         global $wp_filesystem;
 
         // このプラグインの更新かどうかチェック
-        $plugin_slug = 'section-toc-block';
-
         if ( ! isset( $hook_extra['plugin'] ) ) {
             return $result;
         }
 
-        if ( dirname( $hook_extra['plugin'] ) !== $plugin_slug ) {
+        if ( $hook_extra['plugin'] !== STOC_PLUGIN_BASENAME ) {
             return $result;
         }
 
         // 正しいディレクトリ名に変更
+        $plugin_slug = dirname( STOC_PLUGIN_BASENAME );
         $plugin_dir = WP_PLUGIN_DIR . '/' . $plugin_slug;
 
         if ( $wp_filesystem->move( $result['destination'], $plugin_dir ) ) {
