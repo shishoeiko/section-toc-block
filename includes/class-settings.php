@@ -151,9 +151,57 @@ class STOC_Settings {
             echo '<div class="notice notice-success"><p>' . esc_html__( 'デフォルト設定に戻しました。', 'section-toc-block' ) . '</p></div>';
         }
 
+        // 更新確認後のメッセージ
+        if ( isset( $_GET['update_checked'] ) && $_GET['update_checked'] === '1' ) {
+            echo '<div class="notice notice-success"><p>' . esc_html__( '更新を確認しました。', 'section-toc-block' ) . '</p></div>';
+        }
+
+        // GitHub API接続テスト
+        $github_status = $this->test_github_connection();
+
         ?>
         <div class="wrap stoc-settings-wrap">
             <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+
+            <!-- 更新情報セクション -->
+            <div class="stoc-update-section" style="background: #fff; border: 1px solid #ccd0d4; padding: 15px 20px; margin-bottom: 20px;">
+                <h2 style="margin-top: 0;"><?php esc_html_e( 'プラグイン更新', 'section-toc-block' ); ?></h2>
+                <table class="form-table">
+                    <tr>
+                        <th><?php esc_html_e( '現在のバージョン', 'section-toc-block' ); ?></th>
+                        <td><code><?php echo esc_html( Section_TOC_Block::VERSION ); ?></code></td>
+                    </tr>
+                    <tr>
+                        <th><?php esc_html_e( 'GitHub最新バージョン', 'section-toc-block' ); ?></th>
+                        <td>
+                            <?php if ( $github_status['success'] ) : ?>
+                                <code><?php echo esc_html( $github_status['version'] ); ?></code>
+                                <?php if ( version_compare( $github_status['version'], Section_TOC_Block::VERSION, '>' ) ) : ?>
+                                    <span style="color: #d63638; margin-left: 10px;">⚠ <?php esc_html_e( '更新があります', 'section-toc-block' ); ?></span>
+                                <?php else : ?>
+                                    <span style="color: #00a32a; margin-left: 10px;">✓ <?php esc_html_e( '最新です', 'section-toc-block' ); ?></span>
+                                <?php endif; ?>
+                            <?php else : ?>
+                                <span style="color: #d63638;">❌ <?php echo esc_html( $github_status['error'] ); ?></span>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><?php esc_html_e( 'GitHub API', 'section-toc-block' ); ?></th>
+                        <td>
+                            <code style="font-size: 11px;"><?php echo esc_html( Section_TOC_Block::GITHUB_API_URL ); ?></code>
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'options-general.php?page=section-toc-block-settings&stoc_check_update=1' ), 'stoc_check_update' ) ); ?>" class="button button-secondary">
+                        <?php esc_html_e( '更新を確認', 'section-toc-block' ); ?>
+                    </a>
+                    <a href="https://github.com/<?php echo esc_attr( Section_TOC_Block::GITHUB_USERNAME . '/' . Section_TOC_Block::GITHUB_REPO ); ?>/releases" target="_blank" class="button button-secondary" style="margin-left: 5px;">
+                        <?php esc_html_e( 'GitHubリリースを見る', 'section-toc-block' ); ?>
+                    </a>
+                </p>
+            </div>
 
             <form action="options.php" method="post">
                 <?php
@@ -262,5 +310,49 @@ class STOC_Settings {
      */
     public function get_defaults() {
         return $this->defaults;
+    }
+
+    /**
+     * GitHub API接続テスト
+     *
+     * @return array 接続結果
+     */
+    private function test_github_connection() {
+        $response = wp_remote_get( Section_TOC_Block::GITHUB_API_URL, array(
+            'timeout' => 10,
+            'headers' => array(
+                'Accept' => 'application/vnd.github.v3+json',
+                'User-Agent' => 'WordPress/' . get_bloginfo( 'version' ) . '; ' . home_url(),
+            ),
+        ) );
+
+        if ( is_wp_error( $response ) ) {
+            return array(
+                'success' => false,
+                'error'   => $response->get_error_message(),
+            );
+        }
+
+        $code = wp_remote_retrieve_response_code( $response );
+        if ( 200 !== $code ) {
+            return array(
+                'success' => false,
+                'error'   => sprintf( 'HTTP %d エラー', $code ),
+            );
+        }
+
+        $body = json_decode( wp_remote_retrieve_body( $response ) );
+
+        if ( empty( $body ) || ! isset( $body->tag_name ) ) {
+            return array(
+                'success' => false,
+                'error'   => 'レスポンスの解析に失敗',
+            );
+        }
+
+        return array(
+            'success' => true,
+            'version' => ltrim( $body->tag_name, 'vV' ),
+        );
     }
 }
