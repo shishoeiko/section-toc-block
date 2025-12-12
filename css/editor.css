@@ -1,0 +1,83 @@
+/**
+ * Section TOC Block - エディタ用スタイル
+ */
+
+/* ブロック全体 */
+.section-toc-block {
+    background-color: #f8f9fa;
+    border: 1px solid #e2e4e7;
+    border-radius: 4px;
+    padding: 16px;
+    margin: 16px 0;
+}
+
+/* ナビゲーション */
+.section-toc-nav {
+    width: 100%;
+}
+
+/* リスト共通 */
+.section-toc-list {
+    margin: 0;
+    padding: 0;
+    list-style-position: inherit;
+}
+
+/* ビュレットスタイル */
+.section-toc-style-disc {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+/* 番号付きスタイル */
+.section-toc-style-decimal {
+    list-style-type: decimal;
+    padding-left: 20px;
+}
+
+/* なしスタイル */
+.section-toc-style-none {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+/* リストアイテム */
+.section-toc-item {
+    margin: 8px 0;
+    line-height: 1.6;
+}
+
+/* リンク */
+.section-toc-item a {
+    color: #0073aa;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.section-toc-item a:hover {
+    color: #005177;
+    text-decoration: underline;
+}
+
+/* 空の状態 */
+.section-toc-empty {
+    color: #757575;
+    font-style: italic;
+    padding: 12px;
+    text-align: center;
+    background-color: #fafafa;
+    border-radius: 4px;
+}
+
+/* プレースホルダー */
+.section-toc-block .components-placeholder {
+    min-height: 100px;
+}
+
+.section-toc-block .components-placeholder__label {
+    font-weight: 600;
+}
+
+.section-toc-block .components-placeholder__instructions {
+    color: #757575;
+}

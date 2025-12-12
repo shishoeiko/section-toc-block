@@ -1,0 +1,92 @@
+/**
+ * Section TOC Block - フロントエンド用スタイル
+ */
+
+/* ブロック全体 */
+.wp-block-section-toc-list {
+    background-color: #f8f9fa;
+    border: 1px solid #e2e4e7;
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin: 20px 0;
+}
+
+/* ナビゲーション */
+.section-toc-nav {
+    width: 100%;
+}
+
+/* リスト共通 */
+.section-toc-list {
+    margin: 0;
+    padding: 0;
+    list-style-position: inherit;
+}
+
+/* ビュレットスタイル */
+.section-toc-style-disc {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+/* 番号付きスタイル */
+.section-toc-style-decimal {
+    list-style-type: decimal;
+    padding-left: 20px;
+}
+
+/* なしスタイル */
+.section-toc-style-none {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+/* リストアイテム */
+.section-toc-item {
+    margin: 8px 0;
+    line-height: 1.6;
+}
+
+/* リンク */
+.section-toc-item a {
+    color: #0073aa;
+    text-decoration: none;
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.section-toc-item a:hover,
+.section-toc-item a:focus {
+    color: #005177;
+    text-decoration: underline;
+}
+
+/* スムーススクロール */
+html {
+    scroll-behavior: smooth;
+}
+
+/* ターゲットアンカーのハイライト（オプション） */
+h3:target {
+    animation: highlight-flash 1.5s ease-out;
+}
+
+@keyframes highlight-flash {
+    0% {
+        background-color: #fff3cd;
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+
+/* レスポンシブ対応 */
+@media screen and (max-width: 600px) {
+    .wp-block-section-toc-list {
+        padding: 12px 16px;
+    }
+
+    .section-toc-style-disc,
+    .section-toc-style-decimal {
+        padding-left: 16px;
+    }
+}
