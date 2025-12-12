@@ -74,12 +74,17 @@ class STOC_Render {
         // sanitize_title で変換を試行
         $sanitized = sanitize_title( $text );
 
+        // URLエンコードされている場合（%が含まれる）はハッシュを使用
+        if ( strpos( $sanitized, '%' ) !== false ) {
+            return 'h3-' . substr( md5( $text ), 0, 8 );
+        }
+
         // 英数字が含まれていればそのまま使用
         if ( ! empty( $sanitized ) && preg_match( '/[a-z0-9]/', $sanitized ) ) {
             return $sanitized;
         }
 
-        // 日本語などの場合はMD5ハッシュを使用
+        // それ以外の場合はMD5ハッシュを使用
         return 'h3-' . substr( md5( $text ), 0, 8 );
     }
 }
