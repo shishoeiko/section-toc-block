@@ -192,6 +192,22 @@ class STOC_Settings {
                             <code style="font-size: 11px;"><?php echo esc_html( Section_TOC_Block::GITHUB_API_URL ); ?></code>
                         </td>
                     </tr>
+                    <tr>
+                        <th><?php esc_html_e( 'WP更新トランジェント', 'section-toc-block' ); ?></th>
+                        <td>
+                            <?php
+                            $update_plugins = get_site_transient( 'update_plugins' );
+                            $plugin_file = 'section-toc-block/section-toc-block.php';
+                            if ( isset( $update_plugins->response[ $plugin_file ] ) ) {
+                                $update_info = $update_plugins->response[ $plugin_file ];
+                                echo '<span style="color: #00a32a;">✓ ' . esc_html__( '更新情報が登録されています', 'section-toc-block' ) . '</span><br>';
+                                echo '<code>new_version: ' . esc_html( $update_info->new_version ) . '</code>';
+                            } else {
+                                echo '<span style="color: #d63638;">❌ ' . esc_html__( '更新情報が登録されていません', 'section-toc-block' ) . '</span>';
+                            }
+                            ?>
+                        </td>
+                    </tr>
                 </table>
                 <p>
                     <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'options-general.php?page=section-toc-block-settings&stoc_check_update=1' ), 'stoc_check_update' ) ); ?>" class="button button-secondary">
