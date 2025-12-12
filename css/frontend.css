@@ -47,16 +47,13 @@
     line-height: 1.6;
 }
 
-/* リンク */
+/* リンク（色はテーマに依存） */
 .section-toc-item a {
-    color: #0073aa;
     text-decoration: none;
-    transition: color 0.2s ease, text-decoration 0.2s ease;
 }
 
 .section-toc-item a:hover,
 .section-toc-item a:focus {
-    color: #005177;
     text-decoration: underline;
 }
 
