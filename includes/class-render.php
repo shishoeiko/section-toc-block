@@ -62,30 +62,52 @@ class STOC_Render {
 
     /**
      * アンカーIDを生成（日本語対応）
+     * JavaScriptのgenerateAnchorIdと同じアルゴリズムを使用
      *
      * @param string $text 見出しテキスト
      * @return string アンカーID
      */
     public static function generate_anchor_id( $text ) {
         if ( empty( $text ) ) {
-            return 'section-' . substr( md5( uniqid() ), 0, 8 );
+            return 'h3-' . substr( md5( uniqid() ), 0, 8 );
         }
 
-        // sanitize_title で変換を試行
-        $sanitized = sanitize_title( $text );
-
-        // URLエンコードされている場合（%が含まれる）はハッシュを使用
-        if ( strpos( $sanitized, '%' ) !== false ) {
-            return 'h3-' . substr( md5( $text ), 0, 8 );
+        // JavaScriptと同じハッシュアルゴリズム
+        // hash = ((hash << 5) - hash) + charCode (= hash * 31 + charCode)
+        $hash = 0;
+        $len = mb_strlen( $text, 'UTF-8' );
+        for ( $i = 0; $i < $len; $i++ ) {
+            $char = mb_substr( $text, $i, 1, 'UTF-8' );
+            $code = self::char_code_at( $char );
+            $hash = self::int32( ( $hash << 5 ) - $hash + $code );
         }
 
-        // 英数字が含まれていればそのまま使用
-        if ( ! empty( $sanitized ) && preg_match( '/[a-z0-9]/', $sanitized ) ) {
-            return $sanitized;
-        }
+        return 'h3-' . substr( dechex( abs( $hash ) ), 0, 8 );
+    }
 
-        // それ以外の場合はMD5ハッシュを使用
-        return 'h3-' . substr( md5( $text ), 0, 8 );
+    /**
+     * 文字のUnicodeコードポイントを取得（JavaScriptのcharCodeAtと同等）
+     *
+     * @param string $char 1文字
+     * @return int コードポイント
+     */
+    private static function char_code_at( $char ) {
+        $ord = mb_ord( $char, 'UTF-8' );
+        return $ord !== false ? $ord : 0;
+    }
+
+    /**
+     * 32ビット整数としてオーバーフローを処理（JavaScriptの挙動を再現）
+     *
+     * @param int $value
+     * @return int
+     */
+    private static function int32( $value ) {
+        $value = $value & 0xFFFFFFFF;
+        if ( $value >= 0x80000000 ) {
+            $value -= 0x100000000;
+        }
+        return $value;
     }
 }
 
