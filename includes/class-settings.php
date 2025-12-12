@@ -26,6 +26,7 @@ class STOC_Settings {
         'item_template' => '      <li class="section-toc-item">
         <a href="{{anchor}}">{{text}}</a>
       </li>',
+        'custom_css' => '',
     );
 
     /**
@@ -91,6 +92,22 @@ class STOC_Settings {
             array( $this, 'render_item_template_field' ),
             'section-toc-block-settings',
             'stoc_template_section'
+        );
+
+        // CSSセクション
+        add_settings_section(
+            'stoc_css_section',
+            __( 'カスタムCSS', 'section-toc-block' ),
+            array( $this, 'render_css_section_description' ),
+            'section-toc-block-settings'
+        );
+
+        add_settings_field(
+            'custom_css',
+            __( 'CSS', 'section-toc-block' ),
+            array( $this, 'render_custom_css_field' ),
+            'section-toc-block-settings',
+            'stoc_css_section'
         );
     }
 
@@ -282,6 +299,35 @@ class STOC_Settings {
     }
 
     /**
+     * CSSセクション説明を表示
+     */
+    public function render_css_section_description() {
+        echo '<p>' . esc_html__( 'Section TOCブロックにカスタムCSSを追加できます。', 'section-toc-block' ) . '</p>';
+    }
+
+    /**
+     * カスタムCSSフィールドを表示
+     */
+    public function render_custom_css_field() {
+        $settings = $this->get_settings();
+        $value = isset( $settings['custom_css'] ) ? $settings['custom_css'] : '';
+        ?>
+        <textarea name="stoc_settings[custom_css]" rows="12" style="font-family: monospace; width: 100%;"><?php echo esc_textarea( $value ); ?></textarea>
+        <p class="description">
+            <?php esc_html_e( 'フロントエンドに適用されるCSSを記述してください。', 'section-toc-block' ); ?>
+        </p>
+        <div class="placeholder-list">
+            <strong><?php esc_html_e( '使用可能なCSSセレクター:', 'section-toc-block' ); ?></strong><br>
+            <code>.section-toc-wrapper</code> - <?php esc_html_e( 'ブロック全体', 'section-toc-block' ); ?><br>
+            <code>.section-toc-nav</code> - <?php esc_html_e( 'ナビゲーション要素', 'section-toc-block' ); ?><br>
+            <code>.section-toc-list</code> - <?php esc_html_e( 'リスト（ul/ol）', 'section-toc-block' ); ?><br>
+            <code>.section-toc-item</code> - <?php esc_html_e( 'リストアイテム（li）', 'section-toc-block' ); ?><br>
+            <code>.section-toc-item a</code> - <?php esc_html_e( 'リンク', 'section-toc-block' ); ?>
+        </div>
+        <?php
+    }
+
+    /**
      * 設定をサニタイズ
      */
     public function sanitize_settings( $input ) {
@@ -308,6 +354,12 @@ class STOC_Settings {
                    strpos( $sanitized['item_template'], '{{anchor}}' ) === false ) ) {
                 $sanitized['item_template'] = $input['item_template'];
             }
+        }
+
+        // カスタムCSS
+        if ( isset( $input['custom_css'] ) ) {
+            // CSSをサニタイズ（scriptタグなど危険なものを除去）
+            $sanitized['custom_css'] = wp_strip_all_tags( $input['custom_css'] );
         }
 
         return $sanitized;
