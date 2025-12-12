@@ -118,12 +118,8 @@ class STOC_GitHub_Updater {
      * @return object 更新後のトランジェント
      */
     public function check_for_plugin_update( $transient ) {
-        // transientオブジェクトの初期化
-        if ( ! is_object( $transient ) ) {
-            $transient = new stdClass();
-        }
-        if ( ! isset( $transient->response ) ) {
-            $transient->response = array();
+        if ( empty( $transient->checked ) ) {
+            return $transient;
         }
 
         $release_info = $this->get_github_release_info();
@@ -132,31 +128,23 @@ class STOC_GitHub_Updater {
             return $transient;
         }
 
-        // プラグインファイルから現在のバージョンを取得
-        $plugin_file = 'section-toc-block/section-toc-block.php';
-        $plugin_path = WP_PLUGIN_DIR . '/' . $plugin_file;
-
-        if ( ! file_exists( $plugin_path ) ) {
-            return $transient;
-        }
-
-        $plugin_data = get_plugin_data( $plugin_path );
-        $current_version = $plugin_data['Version'];
+        // 現在のバージョンと比較
+        $current_version = Section_TOC_Block::VERSION;
         $new_version = $release_info->version;
 
         if ( version_compare( $new_version, $current_version, '>' ) ) {
+            $plugin_file = 'section-toc-block/section-toc-block.php';
+
             $transient->response[ $plugin_file ] = (object) array(
-                'slug'         => 'section-toc-block',
-                'plugin'       => $plugin_file,
-                'new_version'  => $new_version,
-                'url'          => 'https://github.com/' . Section_TOC_Block::GITHUB_USERNAME . '/' . Section_TOC_Block::GITHUB_REPO,
-                'package'      => $release_info->download_url,
-                'icons'        => array(),
-                'banners'      => array(),
-                'banners_rtl'  => array(),
-                'tested'       => '',
+                'slug'        => 'section-toc-block',
+                'plugin'      => $plugin_file,
+                'new_version' => $new_version,
+                'url'         => 'https://github.com/' . Section_TOC_Block::GITHUB_USERNAME . '/' . Section_TOC_Block::GITHUB_REPO,
+                'package'     => $release_info->download_url,
+                'icons'       => array(),
+                'banners'     => array(),
+                'tested'      => '',
                 'requires_php' => '7.4',
-                'requires'     => '5.0',
             );
         }
 

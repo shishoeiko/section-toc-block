@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Section TOC Block
  * Description: H2見出し配下のH3を自動で箇条書きリストとして表示するGutenbergブロック
- * Version: 1.0.4
+ * Version: 1.0.5
  * Author: fumito
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // 定数定義
-define( 'STOC_VERSION', '1.0.4' );
+define( 'STOC_VERSION', '1.0.5' );
 define( 'STOC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'STOC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
@@ -29,7 +29,7 @@ require_once STOC_PLUGIN_DIR . 'includes/class-github-updater.php';
  */
 class Section_TOC_Block {
 
-    const VERSION = '1.0.4';
+    const VERSION = '1.0.5';
 
     // GitHub自動更新用定数
     const GITHUB_USERNAME = 'shishoeiko';
